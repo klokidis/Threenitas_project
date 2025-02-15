@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.threenitas_project.BookApplication
 import com.example.threenitas_project.data.BooksRepository
+import com.example.threenitas_project.model.Book
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,13 +15,30 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ApiState(
-    val token: String = "",
+    val token: String = "", //token stays on a private state
+)
+
+data class ApiResults(
+    val books: List<Book> = listOf(),
+    val loginError: Boolean = false,
+    val booksError: Boolean = false,
+    val booksLoading: Boolean = false
 )
 
 class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ApiState())
-    private val uiState: StateFlow<ApiState> = _uiState.asStateFlow()
+    private val _apiState = MutableStateFlow(ApiState())
+    private val apiState: StateFlow<ApiState> =
+        _apiState.asStateFlow() //token stays on a private state
+
+    private val _valueState = MutableStateFlow(ApiResults())
+    val valueState: StateFlow<ApiResults> = _valueState.asStateFlow()
+
+    init {
+        if (apiState.value.token != "") {
+            getBooks()
+        }
+    }
 
     fun login(
         userId: String,
@@ -31,14 +49,13 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = booksRepository.login(userId, password)
-                _uiState.update { currentState ->
+                _apiState.update { currentState ->
                     currentState.copy(
                         token = response.access_token
                     )
                 }
                 navigateToBottomBar()
                 changeLoadingState(false)
-                println("Login successful, token: ${uiState.value.token}")
             } catch (e: Exception) {
                 println("Login error: ${e.message}")
                 changeLoadingState(false)
@@ -48,16 +65,33 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
     fun getBooks() {
         viewModelScope.launch {
+            changeBooksLoading(isLoading = true, hasError = false)
             try {
-                val books = booksRepository.getBooks("Bearer ${uiState.value.token}")
-                println("Books: $books")
+                val response = booksRepository.getBooks("Bearer ${apiState.value.token}")
+                _valueState.update { currentState ->
+                    currentState.copy(
+                        books = response,
+                        booksLoading = false
+                    )
+                }
+                println("Books: ${valueState.value.books}")
             } catch (e: Exception) {
                 println("Error fetching books: ${e.message}")
+                changeBooksLoading(isLoading = false, hasError = true)
             }
         }
     }
 
-    companion object {
+    private fun changeBooksLoading(isLoading: Boolean, hasError: Boolean) {
+        _valueState.update { currentState ->
+            currentState.copy(
+                booksLoading = isLoading,
+                booksError = hasError
+            )
+        }
+    }
+
+    companion object { //custom injection
         val Factory: ViewModelProvider.Factory =
             viewModelFactory { //allows you to specify how the ViewModel should be initialized.
                 initializer {
