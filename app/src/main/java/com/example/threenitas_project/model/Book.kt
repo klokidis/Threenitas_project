@@ -7,6 +7,7 @@ data class LoginRequest(
     val UserName: String,
     val Password: String
 )
+
 @Serializable
 data class LoginResponse(
     val expires_in: Int,
@@ -14,6 +15,7 @@ data class LoginResponse(
     val refresh_token: String,
     val access_token: String
 )
+
 @Serializable
 data class Book(
     val id: Int,

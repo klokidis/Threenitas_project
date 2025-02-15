@@ -22,13 +22,15 @@ data class ApiResults(
     val books: List<Book> = listOf(),
     val loginError: Boolean = false,
     val booksError: Boolean = false,
-    val booksLoading: Boolean = false
+    val booksLoading: Boolean = false,
+    val groupedBooks: Map<String, List<Book>> = emptyMap()
 )
 
 class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
     private val _apiState = MutableStateFlow(ApiState())
-    private val apiState: StateFlow<ApiState> = _apiState.asStateFlow() //token stays on a private state
+    private val apiState: StateFlow<ApiState> =
+        _apiState.asStateFlow() //token stays on a private state
 
     private val _valueState = MutableStateFlow(ApiResults())
     val valueState: StateFlow<ApiResults> = _valueState.asStateFlow()
@@ -66,6 +68,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                 _valueState.update { currentState ->
                     currentState.copy(
                         books = response,
+                        groupedBooks = response.groupBy { it.date_released.substring(0, 7) },// Extracting YYYY-MM for grouping
                         booksLoading = false
                     )
                 }

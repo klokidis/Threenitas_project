@@ -172,7 +172,7 @@ fun PageTitle(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .background(MaterialTheme.colorScheme.onBackground),
+            .background(MaterialTheme.colorScheme.tertiary),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
