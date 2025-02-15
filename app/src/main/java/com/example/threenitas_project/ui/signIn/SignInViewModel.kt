@@ -24,11 +24,13 @@ class SignInViewModel : ViewModel() {
 
 
     fun changeNameText(newValue: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                userId = newValue,
-                isValidText = checkUserId(newValue)
-            )
+        if (newValue.matches(Regex("^[a-zA-Z0-9]*$"))) { //accepts only letters or numbers ONLY ENGLISH
+            _uiState.update { currentState -> // for every language replace with "^[\\p{L}0-9]*$"
+                currentState.copy(
+                    userId = newValue,
+                    isValidText = checkUserId(newValue)
+                )
+            }
         }
     }
 
@@ -85,14 +87,14 @@ class SignInViewModel : ViewModel() {
 
     private fun checkUserId(input: String): Boolean {
         // check if the text starts with 2 capitals and then 4 digits
-        val regex = "^[A-Z]{2}\\d{4}".toRegex()
+        val regex = "^[A-Z]{2}\\d{4}".toRegex() //for any language replace with "^[\\p{L}]{2}\\d{4}$".toRegex()
         return regex.matches(input)
     }
 
     private fun checkPassword(password: String): Boolean {
         // checks 8 characters length, 2 letters in Upper Case , 1 Special Character, 2 numerals (0-9), 3 letters in Lower Case.
         val regex =
-            "^(?=(.*[A-Z]){2})(?=(.*[a-z]){3})(?=(.*\\d){2})(?=(.*[!@#\$%^&*(),.?\":{}|<>])).{8,}$".toRegex()
+            "^(?=(.*[A-Z]){2})(?=(.*[a-z]){3})(?=(.*\\d){2})(?=(.*[!@#\$%^&*(),.?\":{}|<>])).{8,}$".toRegex() //for any language replace with "^(?=(.*[\\p{Lu}]){2})(?=(.*[\\p{Ll}]){3})(?=(.*\\d){2})(?=(.*[!@#\\$%^&*(),.?\":{}|<>])).{8,}$".toRegex()
         return regex.matches(password)
     }
 }

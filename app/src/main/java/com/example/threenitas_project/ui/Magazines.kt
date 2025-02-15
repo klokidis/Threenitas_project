@@ -82,12 +82,12 @@ fun Magazines(apiViewModel: ApiViewModel, bottomPadding: PaddingValues) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
+                        .padding(start = 13.dp, end = 13.dp, bottom = 30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     PdfUi(imgUrl = book.img_url, title = book.title)
-                    Spacer(modifier = Modifier.padding(10.dp))
+                    Spacer(modifier = Modifier.padding(13.dp))
                     PdfUi(imgUrl = book.img_url, title = book.title)
                 }
             }
@@ -104,7 +104,7 @@ fun PdfUi(imgUrl: String, title: String) {
     ) {
         AsyncImage(
             modifier = Modifier
-                .width(150.dp)
+                .width(140.dp)
                 .height(160.dp)
                 .clickable(onClick = { }),
             model = ImageRequest.Builder(context = LocalContext.current)
@@ -119,7 +119,7 @@ fun PdfUi(imgUrl: String, title: String) {
         Spacer(modifier = Modifier.padding(3.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
