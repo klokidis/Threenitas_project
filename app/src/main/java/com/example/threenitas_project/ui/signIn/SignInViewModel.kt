@@ -14,9 +14,10 @@ data class SignInState(
     val isValidText: Boolean = true,
     val isValidPassword: Boolean = true,
     val showWrongSignIn: Boolean = false,
+    val loadingSignIn: Boolean = false,
 )
 
-class SignInViewModel() : ViewModel() {
+class SignInViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignInState())
     val uiState: StateFlow<SignInState> = _uiState.asStateFlow()
@@ -52,6 +53,14 @@ class SignInViewModel() : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 passwordInfo = newValue
+            )
+        }
+    }
+
+    fun changeLoadingSignIn(newValue: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                loadingSignIn = newValue
             )
         }
     }

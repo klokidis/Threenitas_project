@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,7 +55,7 @@ import com.example.threenitas_project.network.ApiViewModel
 
 @Composable
 fun SignIn(
-    viewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory),
+    apiViewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory),
     signInViewModel: SignInViewModel = viewModel(),
     navigateToBottomBar: () -> Unit
 ) {
@@ -99,9 +100,12 @@ fun SignIn(
         Spacer(modifier = Modifier.weight(1f))
         OutlinedButton(
             onClick = {
+                signInViewModel.changeLoadingSignIn(true)
                 if (signInViewModel.checkSignIn()) {
                     // Only run login if sign-in checks pass
-                    viewModel.login(uiState.userId, uiState.passwordText,navigateToBottomBar)
+                    apiViewModel.login(uiState.userId, uiState.passwordText,navigateToBottomBar,signInViewModel::changeLoadingSignIn)
+                }else{
+                    signInViewModel.changeLoadingSignIn(false)
                 }
             },
             modifier = Modifier
@@ -146,6 +150,14 @@ fun SignIn(
                     textValue = stringResource(R.string.pass_req),
                     hide = { signInViewModel.changePasswordInfo(false) }
                 )
+            }
+
+            uiState.loadingSignIn -> {
+                Dialog(onDismissRequest = {}) {
+                    Column {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }

@@ -22,7 +22,12 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(ApiState())
     private val uiState: StateFlow<ApiState> = _uiState.asStateFlow()
 
-    fun login(userId: String, password: String, navigateToBottomBar: () -> Unit) {
+    fun login(
+        userId: String,
+        password: String,
+        navigateToBottomBar: () -> Unit,
+        changeLoadingState: (Boolean) -> Unit
+    ) {
         viewModelScope.launch {
             try {
                 val response = booksRepository.login(userId, password)
@@ -32,9 +37,11 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                     )
                 }
                 navigateToBottomBar()
+                changeLoadingState(false)
                 println("Login successful, token: ${uiState.value.token}")
             } catch (e: Exception) {
                 println("Login error: ${e.message}")
+                changeLoadingState(false)
             }
         }
     }
