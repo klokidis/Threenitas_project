@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.threenitas_project.network.ApiViewModel
 import com.example.threenitas_project.ui.signIn.SignIn
 
 enum class AppScreens {
@@ -20,7 +22,10 @@ enum class AppScreens {
 }
 
 @Composable
-fun NavigationScreen(navController: NavHostController = rememberNavController()) {
+fun NavigationScreen(
+    navController: NavHostController = rememberNavController(),
+    apiViewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory)
+) {
     Scaffold(
         modifier = Modifier.safeDrawingPadding()
     ) { paddingValues ->
@@ -32,10 +37,12 @@ fun NavigationScreen(navController: NavHostController = rememberNavController())
             exitTransition = { fadeOut(animationSpec = tween(0)) },
         ) {
             composable(route = AppScreens.SignIn.name) {
-                SignIn(navigateToBottomBar = { navController.navigate(AppScreens.BottomBarScreens.name) })
+                SignIn(
+                    apiViewModel = apiViewModel,
+                    navigateToBottomBar = { navController.navigate(AppScreens.BottomBarScreens.name) })
             }
             composable(route = AppScreens.BottomBarScreens.name) {
-                BottomBarNavGraph()
+                BottomBarNavGraph(apiViewModel)
             }
         }
     }

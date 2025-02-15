@@ -28,17 +28,11 @@ data class ApiResults(
 class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
     private val _apiState = MutableStateFlow(ApiState())
-    private val apiState: StateFlow<ApiState> =
-        _apiState.asStateFlow() //token stays on a private state
+    private val apiState: StateFlow<ApiState> = _apiState.asStateFlow() //token stays on a private state
 
     private val _valueState = MutableStateFlow(ApiResults())
     val valueState: StateFlow<ApiResults> = _valueState.asStateFlow()
 
-    init {
-        if (apiState.value.token != "") {
-            getBooks()
-        }
-    }
 
     fun login(
         userId: String,
@@ -65,6 +59,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
     fun getBooks() {
         viewModelScope.launch {
+            println("Bearer ${apiState.value.token}")
             changeBooksLoading(isLoading = true, hasError = false)
             try {
                 val response = booksRepository.getBooks("Bearer ${apiState.value.token}")
@@ -74,8 +69,9 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                         booksLoading = false
                     )
                 }
-                println("Books: ${valueState.value.books}")
             } catch (e: Exception) {
+                println("Books: ${valueState.value.books}")
+                println("Using ${apiState.value.token}")
                 println("Error fetching books: ${e.message}")
                 changeBooksLoading(isLoading = false, hasError = true)
             }

@@ -3,6 +3,7 @@ package com.example.threenitas_project
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +42,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.threenitas_project.network.ApiViewModel
 import com.example.threenitas_project.ui.Magazines
 import com.example.threenitas_project.ui.theme.BottomNavCurve
 
@@ -54,6 +56,7 @@ enum class BottomBarScreensNames {
 
 @Composable
 fun BottomBarNavGraph(
+    apiViewModel: ApiViewModel,
     navController: NavHostController = rememberNavController(),
 ) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -80,16 +83,18 @@ fun BottomBarNavGraph(
     Scaffold(
         bottomBar = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent),
                 contentAlignment = Alignment.BottomCenter
             ) {
-
                 NavigationBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(110.dp)
                         .clip(BottomNavCurve()),
                     containerColor = Color.White,
+                    contentColor = Color.Transparent
                 ) {
                     BottomBarScreensNames.entries.forEachIndexed { index, screen ->
                         if (screen == BottomBarScreensNames.Center) {
@@ -154,12 +159,12 @@ fun BottomBarNavGraph(
     ) { padding ->
         NavHost(
             navController = navController,
-            modifier = Modifier.padding(padding),
+            modifier = Modifier.padding(),
             startDestination = BottomBarScreensNames.Magazine.name,
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) }
         ) {
-            composable(route = BottomBarScreensNames.Magazine.name) { Magazines() }
+            composable(route = BottomBarScreensNames.Magazine.name) { Magazines(apiViewModel,bottomPadding = padding) }
             composable(route = BottomBarScreensNames.Scan.name) { }
             composable(route = BottomBarScreensNames.Center.name) { }
             composable(route = BottomBarScreensNames.Profile.name) { }

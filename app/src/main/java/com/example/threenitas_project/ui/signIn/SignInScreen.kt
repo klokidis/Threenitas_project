@@ -55,7 +55,7 @@ import com.example.threenitas_project.network.ApiViewModel
 
 @Composable
 fun SignIn(
-    apiViewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory),
+    apiViewModel: ApiViewModel,
     signInViewModel: SignInViewModel = viewModel(),
     navigateToBottomBar: () -> Unit
 ) {
