@@ -56,12 +56,14 @@ class SignInViewModel() : ViewModel() {
         }
     }
 
-    fun checkSignIn() {
+    fun checkSignIn(): Boolean {
+        val isValid = checkUserId(uiState.value.userId) && checkPassword(uiState.value.passwordText)
         _uiState.update { currentState ->
             currentState.copy(
-                showWrongSignIn = !(checkUserId(uiState.value.userId) && checkPassword(uiState.value.passwordText))
+                showWrongSignIn = !isValid
             )
         }
+        return isValid
     }
 
     fun hideShowWrongSignIn() {

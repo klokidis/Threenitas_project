@@ -26,13 +26,13 @@ fun NavigationScreen(navController: NavHostController = rememberNavController())
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = AppScreens.BottomBarScreens.name,
+            startDestination = AppScreens.SignIn.name,
             modifier = Modifier.padding(paddingValues),
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) },
         ) {
             composable(route = AppScreens.SignIn.name) {
-                SignIn()
+                SignIn(navigateToBottomBar = { navController.navigate(AppScreens.BottomBarScreens.name) })
             }
             composable(route = AppScreens.BottomBarScreens.name) {
                 BottomBarNavGraph()

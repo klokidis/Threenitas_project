@@ -45,16 +45,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.threenitas_project.R
+import com.example.threenitas_project.network.ApiViewModel
 
 @Composable
 fun SignIn(
-    signInViewModel: SignInViewModel = viewModel()
+    viewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory),
+    signInViewModel: SignInViewModel = viewModel(),
+    navigateToBottomBar: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val uiState by signInViewModel.uiState.collectAsState()
@@ -95,9 +97,13 @@ fun SignIn(
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
         OutlinedButton(
-            onClick = { signInViewModel.checkSignIn() },
+            onClick = {
+                if (signInViewModel.checkSignIn()) {
+                    // Only run login if sign-in checks pass
+                    viewModel.login(uiState.userId, uiState.passwordText,navigateToBottomBar)
+                }
+            },
             modifier = Modifier
                 .padding(bottom = 20.dp)
                 .width(180.dp)
@@ -323,10 +329,4 @@ fun PopUpSimple(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignInScreenPreview() {
-    SignIn()
 }
