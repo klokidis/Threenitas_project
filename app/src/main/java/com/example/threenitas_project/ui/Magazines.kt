@@ -81,11 +81,13 @@ fun Magazines(apiViewModel: ApiViewModel, bottomPadding: PaddingValues) {
             items(books) { book ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp, bottom = 30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     PdfUi(imgUrl = book.img_url, title = book.title)
+                    Spacer(modifier = Modifier.padding(10.dp))
                     PdfUi(imgUrl = book.img_url, title = book.title)
                 }
             }
@@ -97,15 +99,13 @@ fun Magazines(apiViewModel: ApiViewModel, bottomPadding: PaddingValues) {
 @Composable
 fun PdfUi(imgUrl: String, title: String) {
     Column(
-        modifier = Modifier
-            .padding(start = 25.dp, end = 15.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AsyncImage(
             modifier = Modifier
-                .width(140.dp)
-                .height(150.dp)
+                .width(150.dp)
+                .height(160.dp)
                 .clickable(onClick = { }),
             model = ImageRequest.Builder(context = LocalContext.current)
                 .data((imgUrl).replace("http", "https"))
@@ -123,7 +123,7 @@ fun PdfUi(imgUrl: String, title: String) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .width(140.dp),
+                .width(150.dp),
         )
     }
 }
