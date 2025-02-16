@@ -208,8 +208,8 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
     private fun monitorDownload(book: Book) {//this is not ideal
         changeDownloadingState(book, DownloadStatus.DOWNLOADING) // Set initial state
         CoroutineScope(Dispatchers.IO).launch {
-            repeat(3) { // Repeats 3 times
-                delay(4000)
+            repeat(4) { // Repeats 4 times
+                delay(3000)
                 val status = isBookDownloaded(book)
                 changeDownloadingState(book, status) // Update state
                 if (status == DownloadStatus.DOWNLOADED) { // Stop if downloaded
@@ -218,7 +218,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                     changeDownloadingState(book, DownloadStatus.DOWNLOADING)
                 }
             }
-            // If after 3 attempts the book is still not downloaded, update the status
+            // If after 4 attempts the book is still not downloaded, update the status
             changeDownloadingState(book, DownloadStatus.NOT_DOWNLOADED)
         }
     }
