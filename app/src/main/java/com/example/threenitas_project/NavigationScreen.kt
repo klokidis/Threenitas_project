@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -26,12 +28,13 @@ fun NavigationScreen(
     navController: NavHostController = rememberNavController(),
     apiViewModel: ApiViewModel = viewModel(factory = ApiViewModel.Factory)
 ) {
+    val uiState by apiViewModel.valueState.collectAsState()
     Scaffold(
         modifier = Modifier.safeDrawingPadding()
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = AppScreens.SignIn.name,
+            startDestination = if (uiState.books.isEmpty()) AppScreens.SignIn.name else AppScreens.BottomBarScreens.name,
             modifier = Modifier.padding(paddingValues),
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) },
