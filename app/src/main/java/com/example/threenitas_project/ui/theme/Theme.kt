@@ -96,7 +96,7 @@ fun Threenitas_projectTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> DarkColorScheme //only dark
     }
 
     MaterialTheme(

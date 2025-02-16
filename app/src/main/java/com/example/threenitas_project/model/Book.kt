@@ -2,6 +2,12 @@ package com.example.threenitas_project.model
 
 import kotlinx.serialization.Serializable
 
+enum class DownloadStatus {
+    NOT_DOWNLOADED,
+    DOWNLOADING,
+    DOWNLOADED
+}
+
 @Serializable
 data class LoginRequest(
     val UserName: String,
@@ -22,5 +28,6 @@ data class Book(
     val title: String,
     val img_url: String,
     val date_released: String,
-    val pdf_url: String
+    val pdf_url: String,
+    val isDownloaded: DownloadStatus = DownloadStatus.NOT_DOWNLOADED,
 )

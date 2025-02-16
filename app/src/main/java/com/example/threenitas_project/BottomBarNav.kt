@@ -164,11 +164,16 @@ fun BottomBarNavGraph(
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) }
         ) {
-            composable(route = BottomBarScreensNames.Magazine.name) { Magazines(apiViewModel,bottomPadding = padding) }
-            composable(route = BottomBarScreensNames.Scan.name) { }
-            composable(route = BottomBarScreensNames.Center.name) { }
-            composable(route = BottomBarScreensNames.Profile.name) { }
-            composable(route = BottomBarScreensNames.Settings.name) { }
+            composable(route = BottomBarScreensNames.Magazine.name) {
+                Magazines(
+                    apiViewModel,
+                    bottomPadding = padding
+                )
+            }
+            composable(route = BottomBarScreensNames.Scan.name) { Box(modifier = Modifier.fillMaxSize()) }
+            composable(route = BottomBarScreensNames.Center.name) { Box(modifier = Modifier.fillMaxSize()) }
+            composable(route = BottomBarScreensNames.Profile.name) { Box(modifier = Modifier.fillMaxSize()) }
+            composable(route = BottomBarScreensNames.Settings.name) { Box(modifier = Modifier.fillMaxSize()) }
         }
     }
 }
