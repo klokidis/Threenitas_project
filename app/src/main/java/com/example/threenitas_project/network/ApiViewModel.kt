@@ -66,13 +66,17 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
             changeBooksLoading(isLoading = true, hasError = false)
             try {
                 val response = booksRepository.getBooks("Bearer ${apiState.value.token}")
+                println("books $response")
                 _valueState.update { currentState ->
                     currentState.copy(
                         books = response,
-                        groupedBooks = response.groupBy { it.date_released.substring(0, 7) },// Extracting YYYY-MM for grouping
+                        groupedBooks = response
+                            .groupBy { it.date_released.substring(0, 7) }// Extracting YYYY-MM for grouping
+                            .toSortedMap(compareByDescending { it }), // Sort keys in descending order
                         booksLoading = false
                     )
                 }
+                println("books grouped ${response.groupBy { it.date_released.substring(0, 7)}}")
             } catch (e: Exception) {
                 println("Books: ${valueState.value.books}")
                 println("Using ${apiState.value.token}")

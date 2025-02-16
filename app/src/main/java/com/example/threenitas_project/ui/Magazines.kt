@@ -48,7 +48,9 @@ fun Magazines(apiViewModel: ApiViewModel, bottomPadding: PaddingValues) {
     val outputFormat = SimpleDateFormat("MMM yyyy", Locale.getDefault())
 
     LaunchedEffect(uiState.books) {
-        apiViewModel.getBooks()
+        if(uiState.books.isEmpty()) {
+            apiViewModel.getBooks()
+        }
     }
 
     LazyColumn(
