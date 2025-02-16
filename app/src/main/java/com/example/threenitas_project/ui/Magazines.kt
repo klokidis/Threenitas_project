@@ -183,7 +183,6 @@ fun PdfUi(
                         TriangleWithIcon()
                     }
                 }
-
             }
         }
         Spacer(modifier = Modifier.padding(3.dp))

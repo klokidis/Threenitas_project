@@ -88,13 +88,11 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                                 books.map { book ->
                                     book.copy(isDownloaded = isBookDownloaded(book))
                                 }
-                            }, // Sort keys in descending order
+                            },
                         booksLoading = false
                     )
                 }
             } catch (e: Exception) {
-                println("Books: ${valueState.value.books}")
-                println("Using ${apiState.value.token}")
                 println("Error fetching books: ${e.message}")
                 changeBooksLoading(isLoading = false, hasError = true)
             }
@@ -113,6 +111,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
             openPdf(context, book.title)
             return
         }
+
         changeDownloadingState(book, DownloadStatus.DOWNLOADING)
 
         val downloader = AndroidDownloader(context)
@@ -206,10 +205,10 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
             }
     }
 
-    private fun monitorDownload(book: Book) {
+    private fun monitorDownload(book: Book) {//this is not ideal
         changeDownloadingState(book, DownloadStatus.DOWNLOADING) // Set initial state
         CoroutineScope(Dispatchers.IO).launch {
-            repeat(3) { // Repeats 3 times instead of manually tracking `repeats`
+            repeat(3) { // Repeats 3 times
                 delay(4000)
                 val status = isBookDownloaded(book)
                 changeDownloadingState(book, status) // Update state
@@ -219,7 +218,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                     changeDownloadingState(book, DownloadStatus.DOWNLOADING)
                 }
             }
-            // If after 10 attempts the book is still not downloaded, update the status
+            // If after 3 attempts the book is still not downloaded, update the status
             changeDownloadingState(book, DownloadStatus.NOT_DOWNLOADED)
         }
     }

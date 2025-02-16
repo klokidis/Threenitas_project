@@ -39,7 +39,8 @@ fun NavigationScreen(
             composable(route = AppScreens.SignIn.name) {
                 SignIn(
                     apiViewModel = apiViewModel,
-                    navigateToBottomBar = { navController.navigate(AppScreens.BottomBarScreens.name) })
+                    navigateToBottomBar = { navController.navigate(AppScreens.BottomBarScreens.name) }
+                )
             }
             composable(route = AppScreens.BottomBarScreens.name) {
                 BottomBarNavGraph(apiViewModel)
