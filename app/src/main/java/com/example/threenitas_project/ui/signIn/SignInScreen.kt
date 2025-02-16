@@ -61,6 +61,7 @@ fun SignIn(
 ) {
     val scrollState = rememberScrollState()
     val uiState by signInViewModel.uiState.collectAsState()
+    val apiUiState by apiViewModel.valueState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -103,8 +104,13 @@ fun SignIn(
                 signInViewModel.changeLoadingSignIn(true)
                 if (signInViewModel.checkSignIn()) {
                     // Only run login if sign-in checks pass
-                    apiViewModel.login(uiState.userId, uiState.passwordText,navigateToBottomBar,signInViewModel::changeLoadingSignIn)
-                }else{
+                    apiViewModel.login(
+                        uiState.userId,
+                        uiState.passwordText,
+                        navigateToBottomBar,
+                        signInViewModel::changeLoadingSignIn
+                    )
+                } else {
                     signInViewModel.changeLoadingSignIn(false)
                 }
             },
@@ -131,8 +137,8 @@ fun SignIn(
         when {
             uiState.showWrongSignIn -> {
                 PopUpWithButton(
-                    title = stringResource(R.string.wrong_sign_in_title),
-                    smallText = stringResource(R.string.wrong_sign_in_body),
+                    title = stringResource(R.string.wrong_credentials_title),
+                    smallText = stringResource(R.string.wrong_credentials_body),
                     hide = signInViewModel::hideShowWrongSignIn,
                     buttonText = stringResource(R.string.back)
                 )
@@ -157,6 +163,17 @@ fun SignIn(
                     Column {
                         CircularProgressIndicator()
                     }
+                }
+            }
+
+            apiUiState.loginError -> {
+                Dialog(onDismissRequest = { apiViewModel.changeLoginError(false) }) {
+                    PopUpWithButton(
+                        title = stringResource(R.string.wrong_password_title),
+                        smallText = stringResource(R.string.wrong_password_body),
+                        hide = { apiViewModel.changeLoginError(false) },
+                        buttonText = stringResource(R.string.back)
+                    )
                 }
             }
         }
@@ -213,7 +230,9 @@ fun CustomTextField(
         label = {
             Row {
                 Text(
-                    title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface
+                    title,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.padding(start = 5.dp))
                 IconButton(

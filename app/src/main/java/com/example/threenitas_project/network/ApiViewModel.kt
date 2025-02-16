@@ -54,6 +54,7 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
                 changeLoadingState(false)
             } catch (e: Exception) {
                 println("Login error: ${e.message}")
+                changeLoginError(true)
                 changeLoadingState(false)
             }
         }
@@ -86,6 +87,14 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
             currentState.copy(
                 booksLoading = isLoading,
                 booksError = hasError
+            )
+        }
+    }
+
+    fun changeLoginError(newError: Boolean) {
+        _valueState.update { currentState ->
+            currentState.copy(
+                loginError = newError,
             )
         }
     }

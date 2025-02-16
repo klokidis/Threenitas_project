@@ -6,8 +6,8 @@
     <string name="hide">Hide</string>
     <string name="show">Show</string>
     <string name="info_icon">Info icon</string>
-    <string name="wrong_sign_in_title">Wrong credentials</string>
-    <string name="wrong_sign_in_body">You have entered incorrect credentials</string>
+    <string name="wrong_credentials_title">Wrong credentials</string>
+    <string name="wrong_credentials_body">You have entered incorrect credentials</string>
     <string name="back">Back</string>
     <string name="pass_req">At least 8 characters (2 upperscale, 3 lowercase, 1 special character, 2 numbers)</string>
     <string name="user_req">It must start with 2 capital letters and then 4 numbers</string>
@@ -17,4 +17,6 @@
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
     <string name="play">Play</string>
+    <string name="wrong_password_title">Wrong password</string>
+    <string name="wrong_password_body">try again using different password</string>
 </resources>
