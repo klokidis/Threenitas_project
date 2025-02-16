@@ -170,6 +170,8 @@ fun PdfUi(
                 when (book.isDownloaded) {
                     DownloadStatus.NOT_DOWNLOADED -> {
                         Icon(
+                            modifier = Modifier
+                                .size(55.dp),
                             painter = painterResource(id = R.drawable.download_24px),
                             contentDescription = stringResource(R.string.info_icon),
                         )
