@@ -1,9 +1,12 @@
 package com.example.threenitas_project.network
 
+import android.app.DownloadManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
@@ -116,9 +119,9 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
 
         val downloader = AndroidDownloader(context)
 
-        downloader.downloadFile(book.pdf_url, book.title)
+        val id = downloader.downloadFile(book.pdf_url, book.title)
         Toast.makeText(context, "Download started...", Toast.LENGTH_SHORT).show()
-        monitorDownload(book)
+        trackDownload(context = context, downloadId = id, book = book)
     }
 
 
@@ -205,21 +208,60 @@ class ApiViewModel(private val booksRepository: BooksRepository) : ViewModel() {
             }
     }
 
-    private fun monitorDownload(book: Book) {//this is not ideal
-        changeDownloadingState(book, DownloadStatus.DOWNLOADING) // Set initial state
+    private fun trackDownload(downloadId: Long, context: Context, book: Book) {
+        val downloadManager = context.getSystemService(DownloadManager::class.java)
+        val query = DownloadManager.Query().setFilterById(downloadId)
+
         CoroutineScope(Dispatchers.IO).launch {
-            repeat(4) { // Repeats 4 times
-                delay(3000)
-                val status = isBookDownloaded(book)
-                changeDownloadingState(book, status) // Update state
-                if (status == DownloadStatus.DOWNLOADED) { // Stop if downloaded
-                    return@launch
-                } else {
-                    changeDownloadingState(book, DownloadStatus.DOWNLOADING)
+            var downloading = true
+            while (downloading) {
+                val cursor: Cursor? = downloadManager.query(query)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val status =
+                            it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                        val bytesDownloaded =
+                            it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                        val totalBytes =
+                            it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+                        if (totalBytes > 0) {
+                            val progress = (bytesDownloaded * 100L) / totalBytes
+                            changeDownloadingState(book, DownloadStatus.DOWNLOADING)
+                            Log.d("DownloadTracker", "Download Progress: $progress%")
+                        }
+
+                        when (status) {
+                            DownloadManager.STATUS_SUCCESSFUL -> {
+                                changeDownloadingState(book, DownloadStatus.DOWNLOADED)
+                                downloading = false
+                            }
+
+                            DownloadManager.STATUS_FAILED -> {
+                                changeDownloadingState(book, DownloadStatus.NOT_DOWNLOADED)
+                                downloading = false
+                            }
+
+                            DownloadManager.STATUS_PAUSED -> Log.d(
+                                "DownloadTracker",
+                                "Download Paused"
+                            )
+
+                            DownloadManager.STATUS_PENDING -> Log.d(
+                                "DownloadTracker",
+                                "Download Pending"
+                            )
+
+                            DownloadManager.STATUS_RUNNING -> Log.d(
+                                "DownloadTracker",
+                                "Download In Progress..."
+                            )
+                        }
+                    }
                 }
+                cursor?.close()
+                delay(1000) // Check every second
             }
-            // If after 4 attempts the book is still not downloaded, update the status
-            changeDownloadingState(book, DownloadStatus.NOT_DOWNLOADED)
         }
     }
 }

@@ -136,7 +136,7 @@ fun BottomBarNavGraph(
                 FloatingActionButton(
                     onClick = {
                         selectedItemIndex = 2
-                        navController.navigate(BottomBarScreensNames.Center.name)
+                        navController.navigateToScreen(selectedItemIndex)
                     },
                     modifier = Modifier
                         .size(60.dp)
@@ -170,10 +170,34 @@ fun BottomBarNavGraph(
                     bottomPadding = padding
                 )
             }
-            composable(route = BottomBarScreensNames.Scan.name) { Box(modifier = Modifier.fillMaxSize()) }
-            composable(route = BottomBarScreensNames.Center.name) { Box(modifier = Modifier.fillMaxSize()) }
-            composable(route = BottomBarScreensNames.Profile.name) { Box(modifier = Modifier.fillMaxSize()) }
-            composable(route = BottomBarScreensNames.Settings.name) { Box(modifier = Modifier.fillMaxSize()) }
+            composable(route = BottomBarScreensNames.Scan.name) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "scan"
+                    )
+                }
+            }
+            composable(route = BottomBarScreensNames.Center.name) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "center"
+                    )
+                }
+            }
+            composable(route = BottomBarScreensNames.Profile.name) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "profile"
+                    )
+                }
+            }
+            composable(route = BottomBarScreensNames.Settings.name) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "settings"
+                    )
+                }
+            }
         }
     }
 }
